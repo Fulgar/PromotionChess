@@ -2,6 +2,7 @@ package models;
 
 import java.io.Serializable;
 
+// Container Class for the JSON data received from POST request to server
 public class RESTCallPackage implements Serializable {
 
     private String fenString;

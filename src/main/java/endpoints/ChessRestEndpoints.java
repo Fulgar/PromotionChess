@@ -20,6 +20,7 @@ public class ChessRestEndpoints {
     @Consumes(MediaType.APPLICATION_JSON)
     public String getAIMove(RESTCallPackage movePackage)
     {
+        //TODO: getAIsBestMove will be returned here instead
         return convertFenString(movePackage.getFenString());
     }
 
