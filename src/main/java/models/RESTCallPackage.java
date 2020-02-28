@@ -2,18 +2,18 @@ package models;
 
 import java.io.Serializable;
 
-public class Move implements Serializable {
+public class RESTCallPackage implements Serializable {
 
     private String fenString;
     private Character aiColor;
     private Integer depth;
     private String orientation;
 
-    public Move() {
+    public RESTCallPackage() {
 
     }
 
-    public Move(String fenString, Character aiColor, Integer depth, String orientation) {
+    public RESTCallPackage(String fenString, Character aiColor, Integer depth, String orientation) {
         this.fenString = fenString;
         this.aiColor = aiColor;
         this.depth = depth;

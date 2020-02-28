@@ -1,6 +1,6 @@
 package endpoints;
 
-import models.Move;
+import models.RESTCallPackage;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -10,14 +10,23 @@ public class ChessRestEndpoints {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String test() {
+    public String test()
+    {
         return "Testing......";
     }
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String getMove(Move move) {
-        return move.getFenString();
+    public String getAIMove(RESTCallPackage movePackage)
+    {
+        return convertFenString(movePackage.getFenString());
+    }
+
+    private String convertFenString(String originalFenStr)
+    {
+        String newFenStr;
+        newFenStr = originalFenStr.replace("|", "/");
+        return newFenStr;
     }
 }
