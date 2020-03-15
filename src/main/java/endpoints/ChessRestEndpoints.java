@@ -22,18 +22,13 @@ public class ChessRestEndpoints {
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String getAIMove(Board board)
+    public String getAIMove(RESTCallPackage movePackage)
     {
-
-        return emilyTheAI.minimax(board,null,null,true,4,true).createFenString();
-        //TODO: getAIsBestMove will be returned here instead
-        //return convertFenString(movePackage.getFenString());
-    }
-
-    private String convertFenString(String originalFenStr)
-    {
-        String newFenStr;
-        newFenStr = originalFenStr.replace("|", "/");
-        return newFenStr;
+        Board board = new Board();
+        // return emilyTheAI.minimax(board,null,null,true,4,true).createFenString();
+        // TODO: getAIsBestMove will be returned here instead
+        System.out.println("POST");
+        return "ppppkppp/p1pppppp/1p6/8/8/8/PPPPPPPP/PPPPKPPP";
+        // return convertFenString(movePackage.getFenString());
     }
 }
