@@ -9,7 +9,7 @@ import {catchError} from 'rxjs/operators';
 export class PromotionService {
 
   private moves: Array<{ id: number, piece: String, source: String, target: String, fen: String}> = [];
-  private urlREST : string = "http://localhost:8080/PromotionChessAPI/api/chess";
+  private urlREST : string = "http://localhost:8080/PromotionChess/api/chess";
 
   constructor(private http: HttpClient) { }
 
