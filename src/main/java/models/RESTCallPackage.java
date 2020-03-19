@@ -52,4 +52,12 @@ public class RESTCallPackage implements Serializable {
     public void setOrientation(String orientation) {
         this.orientation = orientation;
     }
+
+    public String toString() {
+        String str = "fenString: " + getFenString() + "\n";
+        str += "AI Color: " + getAiColor() + "\n";
+        str += "Depth: " + getDepth() + "\n";
+        str += "Orientation: " + getOrientation();
+        return str;
+    }
 }

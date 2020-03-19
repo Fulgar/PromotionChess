@@ -28,6 +28,7 @@ public class ChessRestEndpoints {
         // return emilyTheAI.minimax(board,null,null,true,4,true).createFenString();
         // TODO: getAIsBestMove will be returned here instead
         System.out.println("POST");
+        System.out.println(movePackage);
         return "ppppkppp/p1pppppp/1p6/8/8/8/PPPPPPPP/PPPPKPPP";
         // return convertFenString(movePackage.getFenString());
     }
