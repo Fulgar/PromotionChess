@@ -2,3 +2,6 @@
 .gradle/*
 build/*
 out/*
+/src/main/angular/dist/
+/src/main/angular/node_modules/
+

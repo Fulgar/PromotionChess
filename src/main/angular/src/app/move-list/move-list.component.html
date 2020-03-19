@@ -1,0 +1,10 @@
+<div title = "Move List" style="padding-top: 15%;">
+    <nav>
+        <ul>
+            <li>Move List:</li>
+            <li *ngFor="let item of moveList">
+                id: {{ item.id }}, Piece: {{ item.piece }}, From: {{ item.source }}, To: {{ item.target }}
+            </li>
+        </ul>
+    </nav>
+</div>
