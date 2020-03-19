@@ -26,6 +26,12 @@ Jason James
 [chessboard.js](http://chessboardjs.com/)
 
 
-## *IMPORTANT*
+## *IMPORTANT SETUP INSTRUCTIONS*
 
-Be sure to run the "npm install" command into the terminal inside the project directory to install the required node modules
+1. Configure gradle.properties to correct JAVA_HOME location
+2. Ensure gradle build script runs by running "gradle build" in root project directory
+3. (For IntelliJ) Add Run Configuration for JBoss Local Server
+    
+    a.) Select Wildfly server location under "Application Server"
+    
+    b.) Under "Deployment" tab (at top), Select Add -> Artifact -> WAR file (NOT the exploded version)
