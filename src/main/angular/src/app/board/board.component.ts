@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { PromotionService } from '../promotion.service';
 
 declare var ChessBoard: any;
