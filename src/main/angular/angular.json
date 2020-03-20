@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "PromoChessFrontend": {
+    "angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -72,18 +72,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "PromoChessFrontend:build"
+            "browserTarget": "angular:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "PromoChessFrontend:build:production"
+              "browserTarget": "angular:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "PromoChessFrontend:build"
+            "browserTarget": "angular:build"
           }
         },
         "test": {
@@ -129,15 +129,15 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "PromoChessFrontend:serve"
+            "devServerTarget": "angular:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "PromoChessFrontend:serve:production"
+              "devServerTarget": "angular:serve:production"
             }
           }
         }
       }
     }},
-  "defaultProject": "PromoChessFrontend"
+  "defaultProject": "angular"
 }

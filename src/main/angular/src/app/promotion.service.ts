@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,18 @@ export class PromotionService {
   }
 
   getAIMove(boardPackage: object): Observable<string> {
-    return this.http.post<any>(this.urlREST, boardPackage);
+    // let postOptions = {observe: 'response', responseType: 'text'};
+    let postOptions: {
+      headers?: HttpHeaders,
+      observe?: 'body',
+      params?: HttpParams,
+      reportProgress?: boolean,
+      responseType: 'text',
+      withCredentials?: boolean};
+    // } = {
+    //   responseType: 'text'
+    // };
+    //data => this.data = data
+    return this.http.post(this.urlREST, boardPackage, { observe: 'body', responseType: 'text'});
   }
 }

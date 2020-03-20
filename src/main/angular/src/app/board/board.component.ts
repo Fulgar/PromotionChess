@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { PromotionService } from '../promotion.service';
+import {tap} from "rxjs/operators";
+import {Observable, Subscribable} from "rxjs";
 
 declare var ChessBoard: any;
 @Component({
@@ -1251,19 +1253,29 @@ export class BoardComponent implements OnInit {
             board.position(promote(oldPos, newPos, target, piece, orientation), false);
           }
         }
-        setTimeout(function () {
-          let restPackage : object = {
-            "fenString": board.fen(),
-            "aiColor": piece[0],
-            "depth": depth,
-            "orientation": orientation
-          };
 
-          let aiBoardFen : any;
-          service.getAIMove(restPackage).subscribe(data => {});
-          console.log(aiBoardFen);
+        // POST - Request JSON
+        let restPackage : object = {
+          "fenString": board.fen(),
+          "aiColor": piece[0],
+          "depth": depth,
+          "orientation": orientation
+        };
+
+        // AI's Best move on a FEN string
+        let aiBoardFen : any;
+
+        // Makes POST request to get AI's best move and record to aiBoardFen
+        let postRequest = service.getAIMove(restPackage).subscribe(results => aiBoardFen = results);
+
+        // Wait 2 seconds
+        setTimeout(function () {
+          // TODO: Should check if request result is not undefined
+          // Set board state to aiBoardFen
           board.position(ChessBoard.fenToObj(aiBoardFen), true);
-        }, 5000);
+          // Stop subscription stream
+          postRequest.unsubscribe();
+        }, 2000);
         return 'trash';
       }
     }

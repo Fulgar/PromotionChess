@@ -16,14 +16,23 @@ task buildAngular(type: Exec, dependsOn: ['npmInstall']) {
     workingDir("src/main/angular")
     inputs.dir("src/main/angular")
     group BasePlugin.BUILD_GROUP
-    commandLine("ng.cmd", "build")
+    if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+        commandLine("ng.cmd", "build", "--prod", "--output-hashing=all")
+    } else {
+        commandLine("ng", "build", "--prod", "--output-hashing=all")
+    }
+
 }
 
 task npmInstall(type: Exec) {
     workingDir("src/main/angular")
     inputs.dir("src/main/angular")
     group BasePlugin.BUILD_GROUP
-    commandLine("npm.cmd", "install")
+    if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+        commandLine("npm.cmd", "install")
+    } else {
+        commandLine("npm", "install")
+    }
 }
 
 build.dependsOn buildAngular
