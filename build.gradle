@@ -17,9 +17,9 @@ task buildAngular(type: Exec, dependsOn: ['npmInstall']) {
     inputs.dir("src/main/angular")
     group BasePlugin.BUILD_GROUP
     if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
-        commandLine("ng.cmd", "build", "--prod", "--output-hashing=all")
+        commandLine("ng.cmd", "build")
     } else {
-        commandLine("ng", "build", "--prod", "--output-hashing=all")
+        commandLine("ng", "build")
     }
 
 }
