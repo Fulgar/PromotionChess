@@ -22,7 +22,7 @@ export class BoardComponent implements OnInit {
   isPlayersTurn: boolean = this.playerColor == "w";
   changeBoard: Function = (boardObj) => {
     this.startBoard.position(boardObj, true)
-};
+  };
 
   public ngOnInit(): void{
     this.startBoard = ChessBoard('board1', {
@@ -72,13 +72,13 @@ export class BoardComponent implements OnInit {
 
       // 2D Array of all square combinations
       allSquares = [["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"],
-      ["a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"],
-      ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"],
-      ["a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"],
-      ["a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"],
-      ["a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"],
-      ["a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"],
-      ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]];
+        ["a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"],
+        ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"],
+        ["a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"],
+        ["a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"],
+        ["a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"],
+        ["a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"],
+        ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]];
 
       // Assign row and col values
       for (let i: number = 0; i < allSquares.length; i++) {
@@ -1196,11 +1196,11 @@ export class BoardComponent implements OnInit {
     // Returns true if a piece was taken between 2 board states
     // Return Type: boolean
     function wasPieceTaken(oldBoardObj, newBoardObj) {
-        if(Object.entries(oldBoardObj).length > Object.entries(newBoardObj).length){
-          return true
-        } else {
-          return false
-        }
+      if(Object.entries(oldBoardObj).length > Object.entries(newBoardObj).length){
+        return true
+      } else {
+        return false
+      }
     }
 
     // Outlines all legal moves for given pos
@@ -1303,6 +1303,14 @@ export class BoardComponent implements OnInit {
         // Makes POST request to get AI's best move and record to aiBoardFen
         let postRequest = service.getAIMove(restPackage).subscribe(results => aiBoardFen = results);
 
+        // If true REST call will be ignored
+        // Should be TRUE on Frontend-only project and FALSE on full JBoss project
+        const devMode : boolean = false; // TODO: Temporary
+        if (devMode) {
+          isPlayersTurn = true;
+          return 'trash';
+        }
+
         // Wait 2 seconds
         setTimeout(function () {
           // While and if request is still pending do nothing
@@ -1354,5 +1362,5 @@ export class BoardComponent implements OnInit {
   }
 
   serviceCheck() {
-    }
+  }
 }

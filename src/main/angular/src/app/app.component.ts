@@ -3,7 +3,6 @@ import { BoardComponent } from './board/board.component';
 import {BrowserModule} from '@angular/platform-browser';
 import { HttpClientModule} from '@angular/common/http';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
