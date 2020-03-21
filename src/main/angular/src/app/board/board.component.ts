@@ -17,7 +17,9 @@ export class BoardComponent implements OnInit {
 
   startBoard: any;
   counter: number = 0;
-  difficultyDepth: number = 4;
+  difficultyDepth: number = 4; // TODO: Values should be fed from player options
+  playerColor: string = "w";
+  isPlayersTurn: boolean = this.playerColor == "w";
   changeBoard: Function = (boardObj) => {
     this.startBoard.position(boardObj, true)
 };
@@ -27,6 +29,7 @@ export class BoardComponent implements OnInit {
       position: 'ppppkppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPKPPP',
       draggable: true,
       onChange: onChange,
+      onDragStart: onDragStart,
       onDrop: onDrop,
       onMoveEnd: onMoveEnd,
       onMouseoverSquare: onMouseoverSquare,
@@ -37,10 +40,22 @@ export class BoardComponent implements OnInit {
     let numOfMoves = this.counter;
     let service = this.promotionService;
     let depth = this.difficultyDepth;
+    let playerColor = this.playerColor;
+    let isPlayersTurn = this.isPlayersTurn;
 
 
     // Sends board changes to move-list component
     function onChange (oldPos, newPos) {
+    }
+
+
+    // Activates when piece drag begins
+    // If returns false then drag is prevented
+    function onDragStart (sourceSquare, piece, boardPosObj, orientation) {
+      let targetColor : string = piece[0];
+      // If it is the player's turn and it is their piece let them move
+      // Else, prevent them from dragging
+      return isPlayersTurn && targetColor === playerColor;
     }
 
 
@@ -1242,9 +1257,16 @@ export class BoardComponent implements OnInit {
 
       if(!wasLegal){
         return 'snapback';
-      }else{
+      }
+      else {
+        // End player's turn
+        isPlayersTurn = false;
+
+        // Add move to moves-list
         numOfMoves += 1;
         service.addMoveToList(numOfMoves, piece, source, target, newPos);
+
+        // Promote piece if needed
         if(wasPieceTaken(oldPos, newPos)){
           board.position(promote(oldPos, newPos, target, piece, orientation), false);
         }
@@ -1252,6 +1274,19 @@ export class BoardComponent implements OnInit {
           if (piece == "wP" || piece == "bP") {
             board.position(promote(oldPos, newPos, target, piece, orientation), false);
           }
+        }
+
+        // Set enemy color
+        let enemyColor : string = playerColor === "w" ? "b" : "w";
+
+        if (isCheckmate(enemyColor, newPos, orientation))
+        {
+          // TODO: Needs GUI visual to display this information
+          console.log("CHECKMATE!!! PLAYER WINS!!!");
+
+          // End of game has been reached
+          // Will return without setting isPlayersTurn to true, therefore ending control of board
+          return "trash";
         }
 
         // POST - Request JSON
@@ -1263,18 +1298,35 @@ export class BoardComponent implements OnInit {
         };
 
         // AI's Best move on a FEN string
-        let aiBoardFen : any;
+        let aiBoardFen : string = "";
 
         // Makes POST request to get AI's best move and record to aiBoardFen
         let postRequest = service.getAIMove(restPackage).subscribe(results => aiBoardFen = results);
 
         // Wait 2 seconds
         setTimeout(function () {
-          // TODO: Should check if request result is not undefined
+          // While and if request is still pending do nothing
+          while (aiBoardFen == "") {
+            // Do nothing
+          }
           // Set board state to aiBoardFen
           board.position(ChessBoard.fenToObj(aiBoardFen), true);
+
           // Stop subscription stream
           postRequest.unsubscribe();
+
+          if (isCheckmate(playerColor, ChessBoard.fenToObj(aiBoardFen), orientation))
+          {
+            // TODO: Needs GUI visual to display this information
+            console.log("CHECKMATE!!! AI WINS!!!");
+
+            // End of game has been reached
+            // Will return without setting isPlayersTurn to true, therefore ending control of board
+            return "trash";
+          }
+
+          // Resume player's turn
+          isPlayersTurn = true;
         }, 2000);
         return 'trash';
       }
