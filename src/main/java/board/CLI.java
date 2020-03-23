@@ -1,7 +1,7 @@
 package board;
 
-import AIAgent.EmilyTheAI;
 
+import AIAgent.EmilyTheAI;
 
 public class CLI {
 

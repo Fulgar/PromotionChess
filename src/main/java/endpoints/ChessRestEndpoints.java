@@ -1,16 +1,18 @@
 package endpoints;
 
-import AIAgent.EmilyTheAI;
+import AIAgent.BotAI;
 import board.Board;
 import models.RESTCallPackage;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/chess")
-public class ChessRestEndpoints {
 
-    private EmilyTheAI emilyTheAI = new EmilyTheAI();
+@Path("/chess")
+public class ChessRestEndpoints
+{
+    private final int MIN_DEPTH = 1;
+    private final int MAX_DEPTH = 1;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -24,12 +26,15 @@ public class ChessRestEndpoints {
     @Consumes(MediaType.APPLICATION_JSON)
     public String getAIMove(RESTCallPackage movePackage)
     {
-        Board board = new Board();
-        // return emilyTheAI.minimax(board,null,null,true,4,true).createFenString();
-        // TODO: getAIsBestMove will be returned here instead
         System.out.println("POST");
         System.out.println(movePackage);
-        return "ppppkppp/p1pppppp/1p6/8/8/8/PPPPPPPP/PPPPKPPP";
-        // return convertFenString(movePackage.getFenString());
+        BotAI ai = new BotAI(movePackage);
+
+        // Sanitizes depth
+        if (MIN_DEPTH <= movePackage.getDepth() && movePackage.getDepth() <= MAX_DEPTH)
+        {
+            return "ERROR: Depth must be between: " + MIN_DEPTH + " and " + MAX_DEPTH;
+        }
+        return ai.getBestMoveBoard().createFenString();
     }
 }

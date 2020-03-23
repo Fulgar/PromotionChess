@@ -4,10 +4,9 @@ import pieces.*;
 import score.ChessType;
 import score.Score;
 
-import java.io.Serializable;
 import java.util.Hashtable;
 
-public class Board implements Serializable {
+public class Board {
     public Pieces[][] board = new Pieces[8][8];
     Score score;
     String fenString;
@@ -122,11 +121,11 @@ public class Board implements Serializable {
         //ToDo Should we double check to make sure a piece isnt trying to take its own team's piece?
         //determines the next piece's order
         if (capturingPiece.getIsWhite()){
-            score.setWhiteScore(score.getWhiteScore() - ChessType.valueOf(capturingPiece.getType()).getValue());
-            score.setBlackScore(score.getBlackScore() - ChessType.valueOf(capturedPiece.getType()).getValue());
+            score.setWhiteScore(score.getWhiteScore() - ChessType.valueOf(capturingPiece.getType().toUpperCase()).getValue());
+            score.setBlackScore(score.getBlackScore() - ChessType.valueOf(capturedPiece.getType().toUpperCase()).getValue());
         } else{
-            score.setWhiteScore(score.getWhiteScore() - ChessType.valueOf(capturedPiece.getType()).getValue());
-            score.setBlackScore(score.getBlackScore() - ChessType.valueOf(capturingPiece.getType()).getValue());
+            score.setWhiteScore(score.getWhiteScore() - ChessType.valueOf(capturedPiece.getType().toUpperCase()).getValue());
+            score.setBlackScore(score.getBlackScore() - ChessType.valueOf(capturingPiece.getType().toUpperCase()).getValue());
         }
 
         int newPieceOrder;
@@ -201,11 +200,15 @@ public class Board implements Serializable {
             int count = 0;
             boolean isEmpty = false;
             for (int j = 0; j < 8; j++) {
-                if (board[i][j] == null) {
+                if(board[i][j] == null && j ==7) {
+                    fen.append(count + 1);
+                    break;
+                }
+                else if (board[i][j] == null) {
                     isEmpty = true;
                     count++;
                     continue;
-                } else if (isEmpty) {
+                } else if (isEmpty && count != 0) {
                     fen.append(count);
                     count = 0;
                 }
@@ -248,9 +251,13 @@ public class Board implements Serializable {
                         break;
                 }
             }
-            fen.append("/");
+            if (i != 7)
+            {
+                fen.append("/");
+            }
+
         }
-        fen.append(" " + "w" + "");
+
 
         return fen.toString();
     }
@@ -271,6 +278,15 @@ public class Board implements Serializable {
             }
             System.out.println("");
         }
+        System.out.println("_____________________________________________");
+    }
+
+    public void copyObjectKeepReference(Board copyFrom){
+        this.score = copyFrom.score;
+        this.board = copyFrom.board;
+        this.isWhiteMove = copyFrom.isWhiteMove;
+        this.fenString = copyFrom.fenString;
+        this.captureOrder = copyFrom.captureOrder;
     }
 
 

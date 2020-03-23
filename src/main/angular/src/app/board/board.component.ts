@@ -17,7 +17,7 @@ export class BoardComponent implements OnInit {
 
   startBoard: any;
   counter: number = 0;
-  difficultyDepth: number = 4; // TODO: Values should be fed from player options
+  difficultyDepth: number = 1; // TODO: Values should be fed from player options
   playerColor: string = "w";
   isPlayersTurn: boolean = this.playerColor == "w";
   changeBoard: Function = (boardObj) => {
@@ -1292,7 +1292,7 @@ export class BoardComponent implements OnInit {
         // POST - Request JSON
         let restPackage : object = {
           "fenString": board.fen(),
-          "aiColor": piece[0],
+          "aiColor": enemyColor,
           "depth": depth,
           "orientation": orientation
         };

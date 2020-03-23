@@ -5,7 +5,8 @@ import board.Board;
 import pieces.Pieces;
 import score.Score;
 
-public class EmilyTheAI {
+public class EmilyTheAI
+{
     private int searthDepth = 4;
     private String currentBestMove = null;
 
@@ -28,39 +29,51 @@ public class EmilyTheAI {
                     board.board) {
                 for (Pieces piece :
                         row) {
-                    if (piece.getIsWhite() && isMovingPlayerWhite) {
+                    if (piece ==null) continue;
+                    if (piece.getIsWhite() == isMovingPlayerWhite) {
                         for (Board currentPossibleMove :
                                 piece.getPossibleMoves(board)) {
-                            Board eval = minimax(currentPossibleMove, alpha, beta, false, searthDepth--, !isMovingPlayerWhite);
+                            currentPossibleMove.printBoard();
+                            Board eval = minimax(currentPossibleMove, alpha, beta, false, searthDepth- 1, !isMovingPlayerWhite);
                             maxEval = max(maxEval, eval);
-                            alpha = max(alpha, eval);
+                            alpha.copyObjectKeepReference(max(alpha, eval));
+                            if (beta == null) continue;
+                            if (alpha == null) continue;
+
                             if (beta.getAIScore() <= alpha.getAIScore())
                                 break;
                             return maxEval;
 
                         }
+
                     }
                 }
             }
             //maximize
         } else {
+            System.out.println("minimizing player");
             Board minEval = new Board();
             minEval.setScore(new Score(Integer.MAX_VALUE / 2, Integer.MAX_VALUE / 2));
             for (Pieces[] row :
                     board.board) {
                 for (Pieces piece :
                         row) {
-                    if (piece.getIsWhite() && isMovingPlayerWhite) {
+                    if (piece == null) continue;
+                    if (piece.getIsWhite() == isMovingPlayerWhite) {
                         for (Board currentPossibleMove :
                                 piece.getPossibleMoves(board)) {
-                            Board eval = minimax(currentPossibleMove, alpha, beta, false, searthDepth--, !isMovingPlayerWhite);
+                            currentPossibleMove.printBoard();
+                            Board eval = minimax(currentPossibleMove, alpha, beta, true, searthDepth- 1, !isMovingPlayerWhite);
                             minEval = min(minEval, eval);
-                            alpha = min(beta, eval);
+                            beta.copyObjectKeepReference(min(beta, eval));
+                            if (beta == null) continue;
+                            if (alpha == null) continue;
                             if (beta.getAIScore() <= alpha.getAIScore())
                                 break;
                             return minEval;
 
                         }
+
                     }
                 }
             }
@@ -69,6 +82,8 @@ public class EmilyTheAI {
     }
 
     private Board min(Board minEval, Board eval) {
+        if (minEval.getScore().getWhiteScore() == Integer.MAX_VALUE/2) return eval;
+        if (eval == null) return minEval;
         if (minEval.getAIScore() <= eval.getAIScore())
             return minEval;
         else
@@ -76,6 +91,8 @@ public class EmilyTheAI {
     }
 
     private Board max(Board left, Board right) {
+        if (left.getScore().getWhiteScore() == Integer.MIN_VALUE/2) return right;
+        if (right == null) return left;
         if (left.getAIScore() >= right.getAIScore())
             return left;
         else
