@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { PromotionService } from '../promotion.service';
 import {tap} from "rxjs/operators";
 import {Observable, Subscribable} from "rxjs";
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { RulesPageComponent } from '../rules-page/rules-page.component';
 
 declare var ChessBoard: any;
 @Component({
@@ -13,16 +15,28 @@ declare var ChessBoard: any;
 export class BoardComponent implements OnInit {
   title = 'PromoChessFrontend';
 
-  constructor(private promotionService: PromotionService){}
+  constructor(private promotionService: PromotionService, public matDialog: MatDialog){}
 
   startBoard: any;
   counter: number = 0;
+  newFenString: any;
+  moveListLength: any;
   difficultyDepth: number = 1; // TODO: Values should be fed from player options
   playerColor: string = "w";
   isPlayersTurn: boolean = this.playerColor == "w";
   changeBoard: Function = (boardObj) => {
     this.startBoard.position(boardObj, true)
   };
+
+  openModal() {
+    const dialogConfig = new MatDialogConfig();
+    // The user can't close the dialog by clicking outside its body
+    dialogConfig.disableClose = true;
+    dialogConfig.id = "modal-component";
+    dialogConfig.height = "350px";
+    dialogConfig.width = "600px";
+    const modalDialog = this.matDialog.open(RulesPageComponent, dialogConfig);
+  }
 
   public ngOnInit(): void{
     this.startBoard = ChessBoard('board1', {
@@ -99,203 +113,40 @@ export class BoardComponent implements OnInit {
       if (pieceType == "P") {
         let searchRowIndex : number = row;
         let searchColIndex : number = col;
-        if (orientation == "white") {
-          if (pieceColor == "w") {
-            // Look forward
-            searchRowIndex = row - 1;
-            searchColIndex = col;
 
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
-              if (searchSquare in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare];
-                let bogeyColor : string = bogeyPiece[0];
-                if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare);
-                }
-              }
-              else {
+        if ((orientation == "white" && pieceColor == "w") || (orientation == "black" && pieceColor == "b")) {
+          // Look forward
+          searchRowIndex = row - 1;
+          searchColIndex = col;
+
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
+            if (searchSquare in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
                 moves.push(searchSquare);
-                // If in home "pawn launch row"
-                if (allSquares[6].includes(square)) {
-                  searchRowIndex -= 1;
-                  if (0 <= searchRowIndex && searchRowIndex <= 7) {
-                    searchSquare = allSquares[searchRowIndex][searchColIndex];
-                    if (!(searchSquare in boardPos)) {
-                      moves.push(searchSquare);
-                    }
-                  }
-                }
               }
             }
-
-            // Look Forward-Diagonal
-            searchRowIndex = row - 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
-                let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
-                if (searchSquare1 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare1];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare1);
-                  }
-                }
-                else {
-                  moves.push(searchSquare1);
-                }
-              }
-              if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
-                let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
-                if (searchSquare2 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare2];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare2);
-                  }
-                }
-                else {
-                  moves.push(searchSquare2);
-                }
-              }
-            }
-
-            // Look Sideways
-            searchRowIndex = row;
-            searchColIndex = col;
-            if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
-              let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
-              if (searchSquare1 in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare1];
-                let bogeyColor : string = bogeyPiece[0];
-                if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare1);
-                }
-              }
-              else {
-                moves.push(searchSquare1)
-              }
-            }
-            if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
-              let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
-              if (searchSquare2 in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare2];
-                let bogeyColor : string = bogeyPiece[0];
-                if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare2);
-                }
-              }
-              else {
-                moves.push(searchSquare2)
-              }
-            }
-
-            // Look backward
-            searchRowIndex = row + 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
-              if (searchSquare in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare];
-                let bogeyColor : string = bogeyPiece[0];
-                if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare);
-                }
-              }
-            }
-
-            // Look Backward-Diagonal
-            searchRowIndex = row + 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
-                let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
-                if (searchSquare1 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare1];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare1);
-                  }
-                }
-              }
-              if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
-                let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
-                if (searchSquare2 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare2];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare2);
+            else {
+              moves.push(searchSquare);
+              // If in home "pawn launch row"
+              if (allSquares[6].includes(square)) {
+                searchRowIndex -= 1;
+                if (0 <= searchRowIndex && searchRowIndex <= 7) {
+                  searchSquare = allSquares[searchRowIndex][searchColIndex];
+                  if (!(searchSquare in boardPos)) {
+                    moves.push(searchSquare);
                   }
                 }
               }
             }
           }
 
-          if (pieceColor == "b") {
-            // Look forward
-            searchRowIndex = row + 1;
-            searchColIndex = col;
-
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
-              if (searchSquare in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare];
-                let bogeyColor : string = bogeyPiece[0];
-                if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare);
-                }
-              }
-              else {
-                moves.push(searchSquare);
-                // If in home "pawn launch row"
-                if (allSquares[1].includes(square)) {
-                  searchRowIndex += 1;
-                  if (0 <= searchRowIndex && searchRowIndex <= 7) {
-                    searchSquare = allSquares[searchRowIndex][searchColIndex];
-                    if (!(searchSquare in boardPos)) {
-                      moves.push(searchSquare);
-                    }
-                  }
-                }
-              }
-            }
-
-            // Look Forward-Diagonal
-            searchRowIndex = row + 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
-                let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
-                if (searchSquare1 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare1];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare1);
-                  }
-                }
-                else {
-                  moves.push(searchSquare1);
-                }
-              }
-              if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
-                let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
-                if (searchSquare2 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare2];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare2);
-                  }
-                }
-                else {
-                  moves.push(searchSquare2);
-                }
-              }
-            }
-
-            // Look Sideways
-            searchRowIndex = row;
-            searchColIndex = col;
+          // Look Forward-Diagonal
+          searchRowIndex = row - 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
             if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
               let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
               if (searchSquare1 in boardPos) {
@@ -306,7 +157,7 @@ export class BoardComponent implements OnInit {
                 }
               }
               else {
-                moves.push(searchSquare1)
+                moves.push(searchSquare1);
               }
             }
             if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
@@ -319,46 +170,208 @@ export class BoardComponent implements OnInit {
                 }
               }
               else {
-                moves.push(searchSquare2)
+                moves.push(searchSquare2);
               }
             }
+          }
 
-            // Look backward
-            searchRowIndex = row - 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
-              if (searchSquare in boardPos) {
-                let bogeyPiece : string = boardPos[searchSquare];
+          // Look Sideways
+          searchRowIndex = row;
+          searchColIndex = col;
+          if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
+            let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
+            if (searchSquare1 in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare1];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare1);
+              }
+            }
+            else {
+              moves.push(searchSquare1)
+            }
+          }
+          if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
+            let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
+            if (searchSquare2 in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare2];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare2);
+              }
+            }
+            else {
+              moves.push(searchSquare2)
+            }
+          }
+
+          // Look backward
+          searchRowIndex = row + 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
+            if (searchSquare in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare);
+              }
+            }
+          }
+
+          // Look Backward-Diagonal
+          searchRowIndex = row + 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
+              let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
+              if (searchSquare1 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare1];
                 let bogeyColor : string = bogeyPiece[0];
                 if (pieceColor != bogeyColor) {
-                  moves.push(searchSquare);
+                  moves.push(searchSquare1);
                 }
               }
             }
+            if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
+              let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
+              if (searchSquare2 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare2];
+                let bogeyColor : string = bogeyPiece[0];
+                if (pieceColor != bogeyColor) {
+                  moves.push(searchSquare2);
+                }
+              }
+            }
+          }
+        }
 
-            // Look Backward-Diagonal
-            searchRowIndex = row - 1;
-            searchColIndex = col;
-            if (0 <= searchRowIndex && searchRowIndex <= 7) {
-              if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
-                let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
-                if (searchSquare1 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare1];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare1);
+        if ((orientation == "white" && pieceColor == "b") || (orientation == "black" && pieceColor == "w")) {
+          // Look forward
+          searchRowIndex = row + 1;
+          searchColIndex = col;
+
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
+            if (searchSquare in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare);
+              }
+            }
+            else {
+              moves.push(searchSquare);
+              // If in home "pawn launch row"
+              if (allSquares[1].includes(square)) {
+                searchRowIndex += 1;
+                if (0 <= searchRowIndex && searchRowIndex <= 7) {
+                  searchSquare = allSquares[searchRowIndex][searchColIndex];
+                  if (!(searchSquare in boardPos)) {
+                    moves.push(searchSquare);
                   }
                 }
               }
-              if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
-                let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
-                if (searchSquare2 in boardPos) {
-                  let bogeyPiece : string = boardPos[searchSquare2];
-                  let bogeyColor : string = bogeyPiece[0];
-                  if (pieceColor != bogeyColor) {
-                    moves.push(searchSquare2);
-                  }
+            }
+          }
+
+          // Look Forward-Diagonal
+          searchRowIndex = row + 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
+              let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
+              if (searchSquare1 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare1];
+                let bogeyColor : string = bogeyPiece[0];
+                if (pieceColor != bogeyColor) {
+                  moves.push(searchSquare1);
+                }
+              }
+              else {
+                moves.push(searchSquare1);
+              }
+            }
+            if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
+              let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
+              if (searchSquare2 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare2];
+                let bogeyColor : string = bogeyPiece[0];
+                if (pieceColor != bogeyColor) {
+                  moves.push(searchSquare2);
+                }
+              }
+              else {
+                moves.push(searchSquare2);
+              }
+            }
+          }
+
+          // Look Sideways
+          searchRowIndex = row;
+          searchColIndex = col;
+          if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
+            let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
+            if (searchSquare1 in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare1];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare1);
+              }
+            }
+            else {
+              moves.push(searchSquare1)
+            }
+          }
+          if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
+            let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
+            if (searchSquare2 in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare2];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare2);
+              }
+            }
+            else {
+              moves.push(searchSquare2)
+            }
+          }
+
+          // Look backward
+          searchRowIndex = row - 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            let searchSquare : string = allSquares[searchRowIndex][searchColIndex];
+            if (searchSquare in boardPos) {
+              let bogeyPiece : string = boardPos[searchSquare];
+              let bogeyColor : string = bogeyPiece[0];
+              if (pieceColor != bogeyColor) {
+                moves.push(searchSquare);
+              }
+            }
+          }
+
+          // Look Backward-Diagonal
+          searchRowIndex = row - 1;
+          searchColIndex = col;
+          if (0 <= searchRowIndex && searchRowIndex <= 7) {
+            if (0 <= (searchColIndex - 1) && (searchColIndex - 1) <= 7) {
+              let searchSquare1 : string = allSquares[searchRowIndex][searchColIndex - 1];
+              if (searchSquare1 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare1];
+                let bogeyColor : string = bogeyPiece[0];
+                if (pieceColor != bogeyColor) {
+                  moves.push(searchSquare1);
+                }
+              }
+            }
+            if (0 <= (searchColIndex + 1) && (searchColIndex + 1) <= 7) {
+              let searchSquare2 : string = allSquares[searchRowIndex][searchColIndex + 1];
+              if (searchSquare2 in boardPos) {
+                let bogeyPiece : string = boardPos[searchSquare2];
+                let bogeyColor : string = bogeyPiece[0];
+                if (pieceColor != bogeyColor) {
+                  moves.push(searchSquare2);
                 }
               }
             }
@@ -1072,32 +1085,16 @@ export class BoardComponent implements OnInit {
 
       // If piece was not taken and piece is a pawn that has reach enemy row, promote to queen
       if (!(wasPieceTaken(oldBoardObj, newBoardObj))) {
-        if (orientation == "white") {
-          if (promotingPiece == "wP") {
-            // If white pawn has reach enemy row
-            if (newPos[1] == "8") {
-              // Promotes pawn to queen and returns fen string
-              newBoardObj[newPos] = "wQ";
-              return newBoardObj;
-            }
-            else {
-              return newBoardObj;
-            }
-          }
-          else if (promotingPiece == "bP") {
-            // If black pawn has reach enemy row
-            if (newPos[1] == "1") {
-              // Promotes pawn to queen and returns fen string
-              newBoardObj[newPos] = "bQ";
-              return newBoardObj;
-            }
-            else {
-              return newBoardObj;
-            }
-          }
-          else {
-            return newBoardObj;
-          }
+        if (promotingPiece == "wP") {
+          newBoardObj[newPos] = "wQ";
+          return newBoardObj;
+        }
+        else if (promotingPiece == "bP") {
+          newBoardObj[newPos] = "bQ";
+          return newBoardObj;
+        }
+        else {
+          return newBoardObj;
         }
       }
       else {
@@ -1242,19 +1239,23 @@ export class BoardComponent implements OnInit {
     }
 
     // Activates whenever player-drag move has been made
-    function onDrop(source, target, piece, newPos, oldPos, orientation) {
-      hideLegalMoves(source, piece, oldPos, orientation);
+    function onDrop(source, target, piece, newBoardObj, oldBoardObj, orientation) {
+      // Stop displaying previous legal moves, once dropped
+      hideLegalMoves(source, piece, oldBoardObj, orientation);
 
-      let legalSpaces = getLegalMoves(source, piece, oldPos, orientation);
+      // Get legal moves of oldBoardObj
+      let legalSpaces = getLegalMoves(source, piece, oldBoardObj, orientation);
       let wasLegal: boolean;
       wasLegal = false;
 
+      // Determine if new location is in legal moves
       for(let key in legalSpaces){
         if(target === legalSpaces[key]){
           wasLegal = true;
         }
       }
 
+      // If move was illegal, snap back to old position
       if(!wasLegal){
         return 'snapback';
       }
@@ -1264,52 +1265,113 @@ export class BoardComponent implements OnInit {
 
         // Add move to moves-list
         numOfMoves += 1;
-        service.addMoveToList(numOfMoves, piece, source, target, newPos);
+        service.addMoveToList(numOfMoves, piece, source, target, newBoardObj);
+
+        // Will be true when promote() is called
+        let wasPromoted : boolean = false;
+
+        // Player's Move board object initialized as default new board position
+        let playersMoveBoard : any = newBoardObj;
 
         // Promote piece if needed
-        if(wasPieceTaken(oldPos, newPos)){
-          board.position(promote(oldPos, newPos, target, piece, orientation), false);
+        if(wasPieceTaken(oldBoardObj, newBoardObj)){
+          playersMoveBoard = promote(oldBoardObj, newBoardObj, target, piece, orientation);
+          board.position(playersMoveBoard, false);
+          wasPromoted = true;
         }
         else {
           if (piece == "wP" || piece == "bP") {
-            board.position(promote(oldPos, newPos, target, piece, orientation), false);
+            let promotingPiece : string = piece;
+            if (orientation == "white") {
+              if (promotingPiece == "wP") {
+                // If white pawn has reach enemy row
+                if (target[1] == "8") {
+                  // Promotes pawn to queen and returns fen string
+                  playersMoveBoard = promote(oldBoardObj, newBoardObj, target, piece, orientation);
+                  board.position(playersMoveBoard, false);
+                  wasPromoted = true;
+                }
+              }
+              if (promotingPiece == "bP") {
+                // If black pawn has reach enemy row
+                if (target[1] == "1") {
+                  // Promotes pawn to queen and returns fen string
+                  playersMoveBoard = promote(oldBoardObj, newBoardObj, target, piece, orientation);
+                  board.position(playersMoveBoard, false);
+                  wasPromoted = true;
+                }
+              }
+            }
+            else if (orientation == "black") {
+              if (promotingPiece == "wP") {
+                // If white pawn has reach enemy row
+                if (target[1] == "1") {
+                  // Promotes pawn to queen and returns fen string
+                  playersMoveBoard = promote(oldBoardObj, newBoardObj, target, piece, orientation);
+                  board.position(playersMoveBoard, false);
+                  wasPromoted = true;
+                }
+              }
+              if (promotingPiece == "bP") {
+                // If black pawn has reach enemy row
+                if (target[1] == "8") {
+                  // Promotes pawn to queen and returns fen string
+                  playersMoveBoard = promote(oldBoardObj, newBoardObj, target, piece, orientation);
+                  board.position(playersMoveBoard, false);
+                  wasPromoted = true;
+                }
+              }
+            }
           }
         }
 
         // Set enemy color
         let enemyColor : string = playerColor === "w" ? "b" : "w";
 
-        if (isCheckmate(enemyColor, newPos, orientation))
+        if (isCheckmate(enemyColor, newBoardObj, orientation))
         {
           // TODO: Needs GUI visual to display this information
           console.log("CHECKMATE!!! PLAYER WINS!!!");
 
           // End of game has been reached
           // Will return without setting isPlayersTurn to true, therefore ending control of board
-          return "trash";
+          if (wasPromoted) {
+            return "trash";
+          }
+          else {
+            return "drop";
+          }
         }
 
         // POST - Request JSON
         let restPackage : object = {
-          "fenString": board.fen(),
+          "fenString": ChessBoard.objToFen(playersMoveBoard),
           "aiColor": enemyColor,
           "depth": depth,
           "orientation": orientation
         };
 
+        // Update board position
+        board.position(playersMoveBoard, false);
+
         // AI's Best move on a FEN string
         let aiBoardFen : string = "";
-
-        // Makes POST request to get AI's best move and record to aiBoardFen
-        let postRequest = service.getAIMove(restPackage).subscribe(results => aiBoardFen = results);
 
         // If true REST call will be ignored
         // Should be TRUE on Frontend-only project and FALSE on full JBoss project
         const devMode : boolean = false; // TODO: Temporary
         if (devMode) {
           isPlayersTurn = true;
-          return 'trash';
+          if (wasPromoted) {
+            return "trash";
+          }
+          else {
+            return "drop";
+          }
         }
+
+        // Makes POST request to get AI's best move and record to aiBoardFen
+        let postRequest = service.getAIMove(restPackage).subscribe(results => aiBoardFen = results);
 
         // Wait 2 seconds
         setTimeout(function () {
@@ -1342,7 +1404,6 @@ export class BoardComponent implements OnInit {
 
     // Activates whenever animation has occurred (AI has made move)
     function onMoveEnd(oldPos, newPos) {
-
     }
 
     //Activates whenever mouse enters square
@@ -1361,6 +1422,17 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  serviceCheck() {
+  //Resets the Board state back to the board state of the user's previous move
+  undo() {
+
+    this.moveListLength = this.promotionService.getMoveList().length - 1;
+    if(this.moveListLength < 3){
+      this.newFenString = 'ppppkppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPKPPP';
+    }else {
+      this.newFenString = this.promotionService.getMoveList()[this.moveListLength - 2].fen;
+    }
+    this.promotionService.undoMovesFromList();
+
+    this.startBoard.position(this.newFenString, true)
   }
 }

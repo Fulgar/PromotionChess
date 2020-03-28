@@ -31,10 +31,12 @@ public class ChessRestEndpoints
         BotAI ai = new BotAI(movePackage);
 
         // Sanitizes depth
-        if (MIN_DEPTH <= movePackage.getDepth() && movePackage.getDepth() <= MAX_DEPTH)
+        if (MIN_DEPTH > movePackage.getDepth() || movePackage.getDepth() > MAX_DEPTH)
         {
             return "ERROR: Depth must be between: " + MIN_DEPTH + " and " + MAX_DEPTH;
         }
+
+        System.out.println("RESPONSE: " + ai.getBestMoveBoard().createFenString());
         return ai.getBestMoveBoard().createFenString();
     }
 }
