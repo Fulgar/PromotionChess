@@ -1413,10 +1413,13 @@ export class BoardComponent implements OnInit {
       let originalBoard : object = ChessBoard.fenToObj(restPackage["fenString"]);
       let aiColor : string = restPackage["aiColor"];
 
+      // Sets AI loading status to true
+      service.isPOSTLoading = true;
       // Makes POST request to get AI's best move and record to aiBoardFen
       let postRequest = await service.getAIBestMove(restPackage);
       if (typeof postRequest === "string") {
         aiBoardFen = postRequest;
+        service.isPOSTLoading = false;
       }
 
       // Set board state to aiBoardFen

@@ -12,8 +12,7 @@ export class PromotionService {
   private playerOrientation: string = "white";
   private moves: Array<{ id: number, piece: String, source: String, target: String, fen: String}> = [];
   private urlREST : string = "http://localhost:8080/PromotionChess/api/chess";
-  private postFenString : string = "";
-  private isPOSTLoading : boolean = false;
+  public isPOSTLoading : boolean = false; // TODO: Should consider using this variable to display some loading symbol
 
   fenString: any = 'ppppkppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPKPPP';
   constructor(private http: HttpClient) { }
@@ -45,10 +44,7 @@ export class PromotionService {
       this.http.post(this.urlREST, boardPackage, { observe: 'body', responseType: 'text'}).toPromise()
           .then(
               res => {
-                console.log("In res");
                 setTimeout(function() {
-                  // this.postFenString = res.toString();
-                  console.log("res.toString: " + res.toString());
                   resolve(res.toString());
                 }, 2000);
               },
