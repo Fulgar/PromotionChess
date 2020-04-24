@@ -1,6 +1,7 @@
 package endpoints;
 
 import AIAgent.BotAI;
+import AIAgent.ChessBot;
 import board.Board;
 import models.RESTCallPackage;
 
@@ -12,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 public class ChessRestEndpoints
 {
     private final int MIN_DEPTH = 1;
-    private final int MAX_DEPTH = 1;
+    private final int MAX_DEPTH = 5;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -28,7 +29,7 @@ public class ChessRestEndpoints
     {
         System.out.println("POST");
         System.out.println(movePackage);
-        BotAI ai = new BotAI(movePackage);
+        ChessBot ai = new ChessBot(movePackage);
 
         // Sanitizes depth
         if (MIN_DEPTH > movePackage.getDepth() || movePackage.getDepth() > MAX_DEPTH)

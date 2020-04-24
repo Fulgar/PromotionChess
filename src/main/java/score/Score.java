@@ -3,15 +3,9 @@ package score;
 import board.Board;
 import pieces.Pieces;
 
-import java.io.Serializable;
-
-public class Score implements Serializable {
+public class Score {
     private int whiteScore;
     private int blackScore;
-
-    public Score() {
-
-    }
 
     public Score(Board board) { // beginning score for each turn between opponent and user
         for (Pieces[] pieceArray :

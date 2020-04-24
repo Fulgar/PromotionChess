@@ -2,7 +2,8 @@ package pieces;
 
 import board.BoardPosition;
 
-public class KingPiece extends Pieces {
+public class KingPiece extends Pieces
+{
     public KingPiece(Boolean isWhite, int r, int col) {
         super("King", isWhite, 1, r, col);
         updateMovesAndAttack();

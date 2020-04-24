@@ -5,7 +5,6 @@ import board.BoardNode;
 import board.BoardTree;
 import models.RESTCallPackage;
 import pieces.Pieces;
-import score.Score;
 
 public class BotAI
 {
@@ -69,6 +68,7 @@ public class BotAI
 				{
 					for (Board currentPossibleMoveBoard : piece.getPossibleMoves(boardParent))
 					{
+						System.out.println(currentPossibleMoveBoard.createFenString());
 						String test = currentPossibleMoveBoard.createFenString();
 						BoardNode child = new BoardNode(parentNode, null, 0, depth, currentPossibleMoveBoard, 0, 0);
 						parentNode.addChild(child);

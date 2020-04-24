@@ -9,9 +9,9 @@ import java.util.Hashtable;
 public class Board {
     public Pieces[][] board = new Pieces[8][8];
     Score score;
-    String fenString;
+    private String fenString;
     boolean isWhiteMove;
-    Hashtable<String, Number> captureOrder = new Hashtable<>();
+    Hashtable<String, Integer> captureOrder = new Hashtable<>();
 
     public Board() {
 
@@ -31,6 +31,7 @@ public class Board {
         captureOrder.put("Bishop", 3);
         captureOrder.put("Knight", 4);
         captureOrder.put("Queen", 5);
+        captureOrder.put("King", 6);
         //isWhiteMove = reg[1].equals("w");
         for (int i = 0; i < reg[0].length(); i++) {
             switch (reg[0].charAt(i)) {
@@ -96,6 +97,8 @@ public class Board {
             this.score = new Score(this);
         else
             this.score = new Score(score);
+
+        this.fenString = this.createFenString();
     }
     public Board(Board b, BoardPosition oldPos, BoardPosition newPos) { // Incoming board, old position and new position
         // Check if this is an attack and call capture?
@@ -129,15 +132,17 @@ public class Board {
         }
 
         int newPieceOrder;
+
         if (capturedPiece.getType().equals("King")) {
             //GAME OVER
             newPieceOrder = 7;
-        } else if (captureOrder.get(capturedPiece.getType()).intValue() >= captureOrder.get(capturingPiece.getType()).intValue() + 3)
-            newPieceOrder = captureOrder.get(capturedPiece.getType()).intValue() - 1;
+            // } else if (captureOrder.get(capturedPiece.getType()).intValue() >= captureOrder.get(capturingPiece.getType()).intValue() + 3)
+        } else if (captureOrder.get(capturedPiece.getType()) >= captureOrder.get(capturingPiece.getType()) + 3)
+            newPieceOrder = captureOrder.get(capturedPiece.getType()) - 1;
         else if (!capturingPiece.getType().equals("Queen"))
-            newPieceOrder = captureOrder.get(capturingPiece.getType()).intValue() + 1;
+            newPieceOrder = captureOrder.get(capturingPiece.getType()) + 1;
         else
-            newPieceOrder = captureOrder.get(capturingPiece.getType()).intValue();
+            newPieceOrder = captureOrder.get(capturingPiece.getType());
         //sets the captureing pieces old board position to null, and the new position is set the the captured pieces old position.
         switch (newPieceOrder) {
             case 2:
@@ -193,6 +198,11 @@ public class Board {
 
     }
 
+    public void updateFenField()
+    {
+        this.fenString = this.createFenString();
+    }
+
     //Lowercase is Black
     public String createFenString() {
         StringBuilder fen = new StringBuilder();
@@ -200,11 +210,11 @@ public class Board {
             int count = 0;
             boolean isEmpty = false;
             for (int j = 0; j < 8; j++) {
-                if(board[i][j] == null && j ==7) {
-                    fen.append(count + 1);
-                    break;
-                }
-                else if (board[i][j] == null) {
+            	if(board[i][j] == null && j ==7) {
+            		fen.append(count + 1);
+            		break;
+            	}
+            	else if (board[i][j] == null) {
                     isEmpty = true;
                     count++;
                     continue;
@@ -289,5 +299,11 @@ public class Board {
         this.captureOrder = copyFrom.captureOrder;
     }
 
-
+    @Override
+    public String toString()
+    {
+        return "Board{" +
+                "fenString='" + fenString + '\'' +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
+// import 'rxjs/add/operator/toPromise';
 import {catchError, map, tap} from 'rxjs/operators';
 
 @Injectable({
@@ -11,6 +12,8 @@ export class PromotionService {
   private playerOrientation: string = "white";
   private moves: Array<{ id: number, piece: String, source: String, target: String, fen: String}> = [];
   private urlREST : string = "http://localhost:8080/PromotionChess/api/chess";
+  private postFenString : string = "";
+  private isPOSTLoading : boolean = false;
 
   fenString: any = 'ppppkppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPKPPP';
   constructor(private http: HttpClient) { }
@@ -31,20 +34,30 @@ export class PromotionService {
     return this.moves;
   }
 
-  getAIMove(boardPackage: object): Observable<string> {
-    // let postOptions = {observe: 'response', responseType: 'text'};
-    let postOptions: {
-      headers?: HttpHeaders,
-      observe?: 'body',
-      params?: HttpParams,
-      reportProgress?: boolean,
-      responseType: 'text',
-      withCredentials?: boolean};
-    // } = {
-    //   responseType: 'text'
-    // };
-    //data => this.data = data
-    return this.http.post(this.urlREST, boardPackage, { observe: 'body', responseType: 'text'});
+  // Returns AI's best move in the form of a board fenString once POST request has successfully finished
+  async getAIBestMove(boardPackage: object) {
+    return await this.sendBoardPostRequest(boardPackage).then();
+  }
+
+  // Submits POST request and returns Promise
+  sendBoardPostRequest(boardPackage: object) {
+    return new Promise((resolve, reject) => {
+      this.http.post(this.urlREST, boardPackage, { observe: 'body', responseType: 'text'}).toPromise()
+          .then(
+              res => {
+                console.log("In res");
+                setTimeout(function() {
+                  // this.postFenString = res.toString();
+                  console.log("res.toString: " + res.toString());
+                  resolve(res.toString());
+                }, 2000);
+              },
+              msg => {
+                console.log("POST Error: " + msg.toString());
+                reject("Error");
+              }
+          )
+    });
   }
 
   getPlayerOrientation() {
