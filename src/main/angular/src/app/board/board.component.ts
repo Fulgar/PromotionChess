@@ -5,6 +5,7 @@ import {Observable, Subscribable} from "rxjs";
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { RulesPageComponent } from '../rules-page/rules-page.component';
 import { PWinsModalComponent } from '../pwins-modal/pwins-modal.component';
+import {AIWinsModalComponent} from "../aiwins-modal/aiwins-modal.component";
 
 declare var ChessBoard: any;
 @Component({
@@ -51,13 +52,13 @@ export class BoardComponent implements OnInit {
     if(playerWon){
       const modalDialog = this.matDialog.open(PWinsModalComponent, dialogConfig);
     }else {
-      const modalDialog = this.matDialog.open(RulesPageComponent, dialogConfig);
+      const modalDialog = this.matDialog.open(AIWinsModalComponent, dialogConfig);
     }
   }
 
   public ngOnInit(): void{
     this.startBoard = ChessBoard('board1', {
-      position: '4k3/R6R/8/8/8/8/8/7K',
+      position: 'ppppkppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPKPPP',
       draggable: true,
       orientation: this.orientation,
       onChange: onChange,
@@ -1533,6 +1534,7 @@ export class BoardComponent implements OnInit {
       {
         // TODO: Needs GUI visual to display this information
         console.log("CHECKMATE!!! AI WINS!!!");
+        document.getElementById("AIGameOver").click();
 
         // End of game has been reached
         // Will return without setting isPlayersTurn to true, therefore ending control of board
