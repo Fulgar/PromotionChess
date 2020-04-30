@@ -6,8 +6,7 @@ import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common
   providedIn: 'root'
 })
 export class PromotionService {
-
-  private onHomePage: boolean = true;
+  private didWhiteWin: Boolean = true;
   private depthOfDifficulty: number = 2;
   private playerOrientation: string = "white";
   private moves: Array<{ id: number, piece: String, source: String, target: String, fen: String, promoted: boolean}> = [];
@@ -72,11 +71,15 @@ export class PromotionService {
     this.depthOfDifficulty = depth;
   }
 
-  getOnHomePage(){
-    return this.onHomePage;
+  getDidWhiteWin(){
+    return this.didWhiteWin;
   }
 
-  setOnHomePage(value: boolean){
-    this.onHomePage = value;
+  setDidWhiteWin(value: Boolean){
+    this.didWhiteWin = value;
+  }
+
+  resetMoveList(){
+    this.moves = [];
   }
 }

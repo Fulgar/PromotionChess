@@ -22,3 +22,14 @@
 #modal-cancel-button {
     background-color: #4e4e4e;
 }
+
+#container {
+    display: flex;
+}
+
+.column {
+    height: 15%;
+    width: 15%;
+    padding-left: 2%;
+    padding-right: 2%;
+}

@@ -20,7 +20,7 @@
             "tsConfig": "tsconfig.app.json",
             "aot": false,
             "assets": [
-              "src/img/favicon.ico",
+              "src/img",
               "src/assets",
               {
                 "glob": "**/*",
@@ -95,7 +95,7 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
-              "src/img/favicon.ico",
+              "src/img",
               "src/assets",
               {
                 "glob": "**/*",
