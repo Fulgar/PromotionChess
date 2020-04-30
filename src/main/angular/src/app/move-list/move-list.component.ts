@@ -15,7 +15,7 @@ export class MoveListComponent implements OnInit {
     {name: 'wP', url: '/PromotionChess/img/chesspieces/wikipedia/wP.png'},
     {name: 'bP', url: '/PromotionChess/img/chesspieces/wikipedia/bP.png'},
     {name: 'wR', url: '/PromotionChess/img/chesspieces/wikipedia/wR.png'},
-    {name: 'bP', url: '/PromotionChess/img/chesspieces/wikipedia/bR.png'},
+    {name: 'bR', url: '/PromotionChess/img/chesspieces/wikipedia/bR.png'},
     {name: 'wB', url: '/PromotionChess/img/chesspieces/wikipedia/wB.png'},
     {name: 'bB', url: '/PromotionChess/img/chesspieces/wikipedia/bB.png'},
     {name: 'wN', url: '/PromotionChess/img/chesspieces/wikipedia/wN.png'},
