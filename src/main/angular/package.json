@@ -23,7 +23,7 @@
     "@angular/router": "^9.0.7",
     "@chrisoakman/chessboardjs": "^1.0.0",
     "chessboardjs": "0.0.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.11.1",
     "zone.js": "~0.9.1"
