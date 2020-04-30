@@ -6,6 +6,7 @@ import models.RESTCallPackage;
 import pieces.Pieces;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ChessBot
 {
@@ -26,12 +27,15 @@ public class ChessBot
 		this.restCallPackage = restCallPackage;
 	}
 
+	public Board originalBoard;
+
 	// Method is intended to be called from REST endpoint
 	// Will return best move the AI can make in the form of a Board object
 	public Board getBestMoveBoard()
 	{
 		// Board object is obtained from fenString in restCallPackage
 		Board originBoard = new Board(this.restCallPackage.getFenString(), null);
+		originalBoard = originBoard;
 
 		// System.out.println("0: " + this.restCallPackage.getFenString());
 
@@ -52,6 +56,7 @@ public class ChessBot
 		if (node.getDepth() % 2 == 0)
 		{
 			int score = maxAlpha(node);
+			System.out.println("Heuristic: " + score);
 			return node.getBestBoardNode();
 		}
 		// If node depth is odd, MINIMIZE
@@ -71,6 +76,8 @@ public class ChessBot
 		boolean isAIMoving = currentDepth % 2 == 0; // AI only moves on even depths
 		char enemyColor = this.getRestCallPackage().getAiColor() == 'b' ? 'w' : 'b';
 		char movingColor = isAIMoving ? this.getRestCallPackage().getAiColor() : enemyColor;
+
+		ArrayList<BoardNode> randomBestList = new ArrayList<BoardNode>();
 
 		// If current depth of node has reached maximum, then terminal node has been reached
 		if (currentDepth == maxDepth)
@@ -117,6 +124,7 @@ public class ChessBot
 					// Terminal node reached, add score
 					// node.setHeuristic(currentBoard.getAIScore());
 					// return currentBoard.getAIScore();
+					System.out.println(piece.getType() + " : No moves");
 					continue;
 				}
 
@@ -125,6 +133,10 @@ public class ChessBot
 				{
 					for (Board currentPossibleMoveBoard : piece.getPossibleMoves(currentBoard))
 					{
+
+						if (currentPossibleMoveBoard == originalBoard) {
+							System.out.println("SAME FUCKING BOARD");
+						}
 						// System.out.println((currentDepth + 1) + ": " + currentPossibleMoveBoard.createFenString());
 
 						// Creates child node of "node"
@@ -137,8 +149,17 @@ public class ChessBot
 						// If child score is less than node score
 						if (childScore < node.getHeuristic())
 						{
+							randomBestList.clear();
+							randomBestList.add(child);
+
 							node.setHeuristic(childScore);
 							node.setBestBoardNode(child);
+						}
+						if (childScore == node.getHeuristic()) {
+							randomBestList.add(child);
+
+							Random rand = new Random();
+							node.setBestBoardNode(randomBestList.get(rand.nextInt(randomBestList.size())));
 						}
 						// If child score is less than or equal to alpha
 						if (childScore <= node.getAlpha())
@@ -175,6 +196,8 @@ public class ChessBot
 		boolean isAIMoving = currentDepth % 2 == 0; // AI only moves on even depths
 		char enemyColor = this.getRestCallPackage().getAiColor() == 'b' ? 'w' : 'b';
 		char movingColor = isAIMoving ? this.getRestCallPackage().getAiColor() : enemyColor;
+
+		ArrayList<BoardNode> randomBestList = new ArrayList<BoardNode>();
 
 		// If current depth of node has reached maximum, then terminal node has been reached
 		if (currentDepth == maxDepth)
@@ -218,6 +241,7 @@ public class ChessBot
 				// If current piece has no moves, continue through loop
 				if (possibleMovesCount == 0)
 				{
+					System.out.println(piece.getType() + " : No moves");
 					// Terminal node reached, add score
 					// node.setHeuristic(currentBoard.getAIScore());
 					// return currentBoard.getAIScore();
@@ -231,7 +255,9 @@ public class ChessBot
 					for (Board currentPossibleMoveBoard : piece.getPossibleMoves(currentBoard))
 					{
 						// System.out.println((currentDepth + 1) + ": " + currentPossibleMoveBoard.createFenString());
-
+						if (currentPossibleMoveBoard == originalBoard) {
+							System.out.println("SAME FUCKING BOARD");
+						}
 						// Creates child node of "node"
 						BoardNode child = new BoardNode(node, null, 0, currentDepth + 1, currentPossibleMoveBoard, node.getAlpha(), node.getBeta());
 						node.addChild(child);
@@ -242,8 +268,16 @@ public class ChessBot
 						// If child score is greater than node score
 						if (childScore > node.getHeuristic())
 						{
+							randomBestList.clear();
+							randomBestList.add(child);
+
 							node.setHeuristic(childScore);
 							node.setBestBoardNode(child);
+						}
+						if (childScore == node.getHeuristic()) {
+							randomBestList.add(child);
+							Random rand = new Random();
+							node.setBestBoardNode(randomBestList.get(rand.nextInt(randomBestList.size())));
 						}
 						// If child score is greater than or equal to beta
 						if (childScore >= node.getBeta())
