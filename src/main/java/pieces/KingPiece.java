@@ -10,7 +10,7 @@ public class KingPiece extends Pieces
     }
 
     public void updateMovesAndAttack() {
-        moves = new BoardPosition[]{new BoardPosition(-1, 0), new BoardPosition(0, 1), new BoardPosition(1, 0), new BoardPosition(0, -1), new BoardPosition(-1, -1), new BoardPosition(-1, 1), new BoardPosition(1, -1), new BoardPosition(1, 1)};
+        moves = new BoardPosition[]{new BoardPosition(-1, 0), new BoardPosition(0, 1), new BoardPosition(1, 0), new BoardPosition(0, -1)};
         attackablePositions = moves;
     }
 }

@@ -17,7 +17,7 @@ export class AiVsAiComponent implements OnInit {
   startBoard: any;
   orientation: string = this.promotionService.getPlayerOrientation();
   isWhiteTurn: boolean = true;
-  difficultyDepth: number = 3;
+  difficultyDepth: number = 4;
   counter: number = 0;
 
   ngOnInit() {

@@ -2,7 +2,8 @@
 This is our combined Angular 8 Frontend and JavaEE Backend for our Senior Project @ Kennesaw State University of Spring 2020
 
 ## Project Details
-Coming Soon
+The objective of this project was to develop a variant of chess, called Promotion Chess, that starts with 15 Pawns and 1 King on each side, where Pieces can promote into higher ranking pieces.
+The other objective was to include an AI, based on Minimax algorithm, with Alpha-Beta Pruning, that can play Promotion Chess.
 
 ## Repository Links
 [PromotionChess-Frontend](https://github.com/AdamD1001/PromotionChess-Frontend)
